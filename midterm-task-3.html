@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Midterm Task 2. Data Analysis using Pivot Table</title>
+    <title>Midterm Task 3. Data Prep and Cleaning and Modeling w Power Query</title>
     <style>
         * {
             margin: 0;
@@ -145,7 +145,8 @@
             z-index: 1;
         }
 
-        .back-link {
+        .back-link,
+        .download-btn {
             display: inline-block;
             background: rgba(0, 212, 255, 0.1);
             color: #00d4ff;
@@ -157,10 +158,14 @@
             letter-spacing: 1px;
             transition: all 0.3s ease;
             font-size: 13px;
+        }
+
+        .back-link {
             margin-bottom: 20px;
         }
 
-        .back-link:hover {
+        .back-link:hover,
+        .download-btn:hover {
             background: #00d4ff;
             color: #0a0e27;
             box-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
@@ -192,6 +197,23 @@
             font-size: 15px;
         }
 
+        .download-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 0 0 16px;
+        }
+
+        .pdf-frame {
+            width: 100%;
+            height: 76vh;
+            min-height: 520px;
+            border: 2px solid #00d4ff;
+            border-radius: 0;
+            box-shadow: 0 0 18px rgba(0, 212, 255, 0.22);
+            background: #fff;
+        }
+
         @media (max-width: 768px) {
             .header {
                 padding: 34px 20px 26px;
@@ -204,14 +226,19 @@
             .content {
                 padding: 24px 20px 28px;
             }
+
+            .pdf-frame {
+                height: 62vh;
+                min-height: 420px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <h1>MIDTERM TASK 2</h1>
-            <p>DATA ANALYSIS USING PIVOT TABLE</p>
+            <h1>MIDTERM TASK 3</h1>
+            <p>DATA PREP, CLEANING, AND MODELING WITH POWER QUERY</p>
         </header>
 
         <main class="content">
@@ -220,8 +247,37 @@
             <section class="section">
                 <h2>PROJECT DESCRIPTION</h2>
                 <div class="description">
-                    <p>None</p>
+                    <p>Midterm Task 3 - Data Preparation, Cleaning, and Modeling using Power Query</p>
+
+                    <p>In this task, I used Power Query in Excel to clean and prepare a student dataset. The data was originally in a flat table, so I organized it to make it easier to understand and analyze.</p>
+
+                    <p>First, I cleaned the data by removing null values, fixing data types, and renaming columns properly. I also split some columns like the student name into first name and last name, and the schedule into days, time start, and time end. I replaced incorrect email formats and added new columns such as Year Label and Program Description. I also made sure there were no duplicate records.</p>
+
+                    <p>After cleaning, I separated the data into different tables based on their categories. I created tables for students, courses, and programs using Power Query. I added IDs for each table and connected them using relationships (primary and foreign keys).</p>
+
+                    <p>Lastly, I created a data model to link all tables together. This made the data more organized and ready for analysis. Overall, this task helped me understand how to clean data and convert it into a structured format using Power Query.</p>
                 </div>
+            </section>
+
+            <section class="section">
+                <h2>FILES</h2>
+                <div class="download-actions">
+                    <a
+                        class="download-btn"
+                        href="pdf file/Midterm Task 3. Data Prep and Cleaning and Modeling w Power Query/Midterm Task 3. Data Prep and Cleaning and Modeling w Power Query.pdf"
+                        download
+                    >DOWNLOAD PDF</a>
+                    <a
+                        class="download-btn"
+                        href="excel file/Midterm Task 3. Data Prep and Cleaning and Modeling w Power Query/Student Clean Data.xlsx"
+                        download
+                    >DOWNLOAD EXCEL SOFT COPY</a>
+                </div>
+                <iframe
+                    class="pdf-frame"
+                    src="pdf file/Midterm Task 3. Data Prep and Cleaning and Modeling w Power Query/Midterm Task 3. Data Prep and Cleaning and Modeling w Power Query.pdf"
+                    title="Midterm Task 3 PDF"
+                ></iframe>
             </section>
         </main>
     </div>

@@ -1,422 +1,307 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Midterm Task 1</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Midterm Lab 1 Task Data Cleaning and Preparation</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Courier New', monospace;
             background:
-                radial-gradient(circle at 15% 20%, rgba(139, 92, 246, 0.35), transparent 40%),
-                radial-gradient(circle at 85% 15%, rgba(34, 211, 238, 0.28), transparent 35%),
-                radial-gradient(circle at 50% 80%, rgba(236, 72, 153, 0.25), transparent 40%),
-                #050816;
+                radial-gradient(circle at 18% 18%, rgba(168, 85, 247, 0.42), transparent 42%),
+                radial-gradient(circle at 82% 14%, rgba(56, 189, 248, 0.34), transparent 38%),
+                radial-gradient(circle at 50% 82%, rgba(244, 114, 182, 0.28), transparent 45%),
+                radial-gradient(circle at 70% 60%, rgba(129, 140, 248, 0.20), transparent 42%),
+                #02030c;
             min-height: 100vh;
             padding: 10px;
-            color: #b0bec5;
+            position: relative;
+            overflow-x: hidden;
+            animation: nebulaShift 18s ease-in-out infinite;
+        }
+
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::before {
+            background-image:
+                radial-gradient(1px 1px at 20px 30px, rgba(255, 255, 255, 0.8), transparent),
+                radial-gradient(2px 2px at 120px 80px, rgba(255, 255, 255, 0.85), transparent),
+                radial-gradient(1px 1px at 220px 150px, rgba(167, 139, 250, 0.9), transparent),
+                radial-gradient(2px 2px at 340px 240px, rgba(103, 232, 249, 0.8), transparent),
+                radial-gradient(1px 1px at 500px 120px, rgba(255, 255, 255, 0.6), transparent),
+                radial-gradient(2px 2px at 700px 280px, rgba(167, 139, 250, 0.65), transparent);
+            background-size: 420px 320px, 420px 320px, 420px 320px, 420px 320px, 760px 460px, 920px 580px;
+            animation: twinkle 7s linear infinite, starDrift 40s linear infinite;
+            opacity: 0.95;
+        }
+
+        body::after {
+            background:
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.09), transparent 55%),
+                conic-gradient(from 0deg at 50% 50%, rgba(34, 211, 238, 0.08), rgba(168, 85, 247, 0.08), rgba(236, 72, 153, 0.08), rgba(34, 211, 238, 0.08));
+            mix-blend-mode: screen;
+            animation: pulseGalaxy 6s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes pulseGalaxy {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        @keyframes starDrift {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(-220px) translateY(-120px); }
+        }
+
+        @keyframes nebulaShift {
+            0%, 100% { filter: saturate(1) hue-rotate(0deg); }
+            50% { filter: saturate(1.15) hue-rotate(8deg); }
         }
 
         .container {
-            max-width: 1700px;
-            margin: 0 auto;
-            background: rgba(15, 20, 45, 0.72);
+            background: rgba(15, 20, 45, 0.7);
+            backdrop-filter: blur(10px);
             border: 2px solid;
             border-image: linear-gradient(135deg, #00d4ff, #7928ca, #00d4ff) 1;
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.28);
-            padding: 34px;
+            border-radius: 0;
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.3), inset 0 0 40px rgba(121, 40, 202, 0.1);
+            max-width: 1500px;
+            width: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
         }
 
-        h1 {
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(0, 212, 255, 0.03) 50%, transparent 70%);
+            pointer-events: none;
+            animation: scan 8s linear infinite;
+        }
+
+        .container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% -15%, rgba(103, 232, 249, 0.12), transparent 55%);
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(121, 40, 202, 0.1));
+            padding: 44px 40px 34px;
+            text-align: center;
             color: #00d4ff;
-            text-shadow: 0 0 10px rgba(0, 212, 255, 0.7);
-            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 34px;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        .header p {
+            color: #b0bec5;
             letter-spacing: 1px;
+        }
+
+        .content {
+            padding: 40px 56px 56px;
+            position: relative;
+            z-index: 1;
         }
 
         .back-link {
             display: inline-block;
-            margin-bottom: 20px;
+            background: rgba(0, 212, 255, 0.1);
             color: #00d4ff;
+            padding: 10px 16px;
+            margin-bottom: 20px;
+            border-radius: 0;
             text-decoration: none;
             border: 2px solid #00d4ff;
-            padding: 8px 12px;
-            background: rgba(0, 212, 255, 0.07);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
         }
 
         .back-link:hover {
             background: #00d4ff;
-            color: #050816;
+            color: #0a0e27;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
         }
 
-        .download-link {
-            display: inline-block;
-            margin-left: 10px;
-            margin-bottom: 20px;
+        .section h2 {
             color: #00d4ff;
-            text-decoration: none;
-            border: 2px solid #7928ca;
-            padding: 8px 12px;
-            background: rgba(121, 40, 202, 0.12);
-        }
-
-        .download-link:hover {
-            background: #7928ca;
-            color: #ffffff;
-        }
-
-        .notice {
-            border: 2px solid #7928ca;
-            background: rgba(121, 40, 202, 0.12);
-            color: #e9d5ff;
-            padding: 14px;
-            margin-bottom: 20px;
-        }
-
-        .folder-path {
-            color: #67e8f9;
-            margin-top: 8px;
-            word-break: break-word;
-        }
-
-        .excel-image-wrap {
-            border: 2px solid #00d4ff;
-            background: rgba(5, 8, 22, 0.9);
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.25);
-            padding: 14px;
-            overflow-x: auto;
-        }
-
-        .photo-wrap {
-            border: 2px solid #7928ca;
-            background: rgba(121, 40, 202, 0.1);
-            box-shadow: 0 0 22px rgba(121, 40, 202, 0.2);
-            padding: 12px;
+            font-size: 24px;
             margin-bottom: 18px;
-        }
-
-        .photo-title {
-            color: #67e8f9;
-            margin-bottom: 10px;
-        }
-
-        .task-photo {
-            width: 100%;
-            max-height: 520px;
-            object-fit: contain;
-            background: rgba(5, 8, 22, 0.85);
-            border: 1px solid rgba(0, 212, 255, 0.6);
-            display: block;
-            cursor: zoom-in;
-        }
-
-        .click-hint {
-            color: #67e8f9;
-            font-size: 13px;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
-        }
-
-        .lightbox {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: rgba(2, 6, 23, 0.95);
-            padding: 24px;
-            text-align: center;
-        }
-
-        .lightbox.show {
-            display: block;
-        }
-
-        .lightbox img {
-            max-width: 96vw;
-            max-height: 88vh;
-            margin-top: 28px;
-            border: 2px solid #00d4ff;
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.45);
-            background: #050816;
-        }
-
-        .lightbox-title {
-            color: #00d4ff;
-            margin-top: 4px;
-            margin-bottom: 12px;
+            border-bottom: 2px solid #7928ca;
+            padding-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
             letter-spacing: 1px;
         }
 
-        .lightbox-close {
-            position: absolute;
-            top: 14px;
-            right: 20px;
-            border: 2px solid #00d4ff;
-            color: #00d4ff;
-            background: #050816;
-            width: 38px;
-            height: 38px;
-            font-size: 24px;
-            line-height: 32px;
-            cursor: pointer;
+        .description {
+            background: rgba(0, 212, 255, 0.03);
+            border: 2px solid #7928ca;
+            border-radius: 0;
+            box-shadow: 0 0 15px rgba(121, 40, 202, 0.2);
+            padding: 20px;
+            margin-bottom: 20px;
         }
 
-        .excel-title {
-            color: #00d4ff;
-            margin-bottom: 12px;
-            letter-spacing: 0.6px;
+        .description p {
+            margin: 0 0 14px;
+            color: #b0bec5;
+            line-height: 1.8;
+            font-size: 15px;
         }
 
-        .excel-table {
+        .description p:last-child {
+            margin-bottom: 0;
+        }
+
+        .pdf-frame {
             width: 100%;
-            min-width: 2100px;
-            border-collapse: collapse;
-            font-size: 12px;
+            height: 76vh;
+            min-height: 520px;
+            border: 2px solid #00d4ff;
+            border-radius: 0;
+            box-shadow: 0 0 18px rgba(0, 212, 255, 0.22);
+            background: #fff;
         }
 
-        .excel-table th,
-        .excel-table td {
-            border: 1px solid rgba(103, 232, 249, 0.35);
-            padding: 7px 8px;
-            text-align: left;
-            white-space: nowrap;
+        .download-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 0 0 16px;
         }
 
-        .excel-table th {
-            background: rgba(121, 40, 202, 0.35);
-            color: #e9d5ff;
-            position: sticky;
-            top: 0;
+        .download-btn {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+            padding: 10px 16px;
+            border-radius: 0;
+            text-decoration: none;
+            border: 2px solid #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            font-size: 13px;
         }
 
-        .excel-table td {
-            color: #d1d5db;
-            background: rgba(15, 20, 45, 0.45);
+        .download-btn:hover {
+            background: #00d4ff;
+            color: #0a0e27;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
         }
 
-        .excel-table tr:nth-child(even) td {
-            background: rgba(15, 20, 45, 0.7);
-        }
+        @media (max-width: 768px) {
+            .header {
+                padding: 34px 20px 26px;
+            }
 
-        .table-host {
-            overflow-x: auto;
+            .header h1 {
+                font-size: 26px;
+            }
+
+            .content {
+                padding: 24px 20px 28px;
+            }
+
+            .pdf-frame {
+                height: 62vh;
+                min-height: 420px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <a class="back-link" href="home.html">← Back to Home</a>
-        <a class="download-link" href="Midterm%20Task%201.%20Data%20Cleaning%20and%20Preparation%20using%20Excel/Copy%20of%20Montoya_Bike%20Sales_Prepare_Lab%203.4.7_fixed.xlsx.xlsx" download="Montoya_Bike_Sales_Prepare_Lab_3.4.7_fixed.xlsx">⬇ Download Excel File</a>
-        <h1>Midterm Task 1. Data Cleaning and Preparation using Excel</h1>
+        <header class="header">
+            <h1>MIDTERM LAB 1 TASK</h1>
+            <p>DATA CLEANING AND PREPARATION</p>
+        </header>
 
-        <div class="photo-wrap">
-            <h2 class="photo-title">Midterm Task Photo</h2>
-            <div class="click-hint">Click photo to enlarge</div>
-            <img class="task-photo" src="Midterm%20Task%201.%20Data%20Cleaning%20and%20Preparation%20using%20Excel/DIAGRAM.png" alt="Midterm Task Diagram" onclick="openLightbox(this)">
-        </div>
+        <main class="content">
+            <a class="back-link" href="index.html">BACK TO PORTFOLIO</a>
 
-        <div class="excel-image-wrap">
-            <h2 class="excel-title">CLEANED DATA</h2>
-            <table class="excel-table">
-                <thead>
-                    <tr>
-                        <th>Sales_Order #</th>
-                        <th>Date</th>
-                        <th>Day</th>
-                        <th>Month</th>
-                        <th>Year</th>
-                        <th>Customer_Age</th>
-                        <th>Age_Group</th>
-                        <th>Customer_Gender</th>
-                        <th>Country</th>
-                        <th>Length</th>
-                        <th>State</th>
-                        <th>Product_Category</th>
-                        <th>Sub_Category</th>
-                        <th>Model</th>
-                        <th>Color</th>
-                        <th>Size</th>
-                        <th>Order_Quantity</th>
-                        <th>Unit_Cost</th>
-                        <th>Unit_Price</th>
-                        <th>Profit</th>
-                        <th>Cost</th>
-                        <th>Revenue</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>000261695</td><td>12/1/2021</td><td>1</td><td>December</td><td>2021</td><td>39</td><td>Adults (35-64)</td><td>Female</td><td>United States</td><td>13</td><td>California</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-200</td><td>Black</td><td>46</td><td>4</td><td>$1,252.00</td><td>$2,295.00</td><td>$4,172.00</td><td>$5,008.00</td><td>$9,180.00</td></tr>
-                    <tr><td>000261696</td><td>12/1/2021</td><td>1</td><td>December</td><td>2021</td><td>44</td><td>Adults (35-64)</td><td>Male</td><td>United Kingdom</td><td>14</td><td>England</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-200</td><td>Silver</td><td>42</td><td>1</td><td>$1,266.00</td><td>$2,320.00</td><td>$1,054.00</td><td>$1,266.00</td><td>$2,320.00</td></tr>
-                    <tr><td>000261697</td><td>12/2/2021</td><td>2</td><td>December</td><td>2021</td><td>37</td><td>Adults (35-64)</td><td>Male</td><td>United States</td><td>13</td><td>California</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-400-W</td><td>Silver</td><td>46</td><td>2</td><td>$420.00</td><td>$769.00</td><td>$698.00</td><td>$840.00</td><td>$1,538.00</td></tr>
-                    <tr><td>000261698</td><td>12/2/2021</td><td>2</td><td>December</td><td>2021</td><td>31</td><td>Young Adults (25-34)</td><td>Female</td><td>Australia</td><td>9</td><td>New South Wales</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-400-W</td><td>Silver</td><td>42</td><td>1</td><td>$420.00</td><td>$769.00</td><td>$349.00</td><td>$420.00</td><td>$769.00</td></tr>
-                    <tr><td>000261699</td><td>12/3/2021</td><td>3</td><td>December</td><td>2021</td><td>37</td><td>Adults (35-64)</td><td>Female</td><td>United States</td><td>13</td><td>California</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-200</td><td>Black</td><td>46</td><td>2</td><td>$1,252.00</td><td>$2,295.00</td><td>$2,086.00</td><td>$2,504.00</td><td>$4,590.00</td></tr>
-                    <tr><td>000261700</td><td>12/3/2021</td><td>3</td><td>December</td><td>2021</td><td>24</td><td>Youth (&lt;25)</td><td>Female</td><td>United Kingdom</td><td>14</td><td>England</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-200</td><td>Black</td><td>38</td><td>1</td><td>$1,252.00</td><td>$2,295.00</td><td>$1,043.00</td><td>$1,252.00</td><td>$2,295.00</td></tr>
-                    <tr><td>000261701</td><td>12/3/2021</td><td>3</td><td>December</td><td>2021</td><td>37</td><td>Adults (35-64)</td><td>Male</td><td>United States</td><td>13</td><td>Washington</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-200</td><td>Black</td><td>46</td><td>1</td><td>$1,252.00</td><td>$2,295.00</td><td>$1,043.00</td><td>$1,252.00</td><td>$2,295.00</td></tr>
-                    <tr><td>000261702</td><td>12/4/2021</td><td>4</td><td>December</td><td>2021</td><td>31</td><td>Young Adults (25-34)</td><td>Female</td><td>Australia</td><td>9</td><td>New South Wales</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-400-W</td><td>Silver</td><td>42</td><td>4</td><td>$420.00</td><td>$769.00</td><td>$1,396.00</td><td>$1,680.00</td><td>$3,076.00</td></tr>
-                    <tr><td>000261703</td><td>12/5/2021</td><td>5</td><td>December</td><td>2021</td><td>39</td><td>Adults (35-64)</td><td>Female</td><td>United States</td><td>13</td><td>California</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-200</td><td>Black</td><td>46</td><td>4</td><td>$1,252.00</td><td>$2,295.00</td><td>$4,172.00</td><td>$5,008.00</td><td>$9,180.00</td></tr>
-                    <tr><td>000261704</td><td>12/5/2021</td><td>5</td><td>December</td><td>2021</td><td>42</td><td>Adults (35-64)</td><td>Male</td><td>Germany</td><td>7</td><td>Nordrhein-Westfalen</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-200</td><td>Black</td><td>38</td><td>4</td><td>$1,252.00</td><td>$2,295.00</td><td>$4,172.00</td><td>$5,008.00</td><td>$9,180.00</td></tr>
-                    <tr><td>000261705</td><td>12/5/2021</td><td>5</td><td>December</td><td>2021</td><td>35</td><td>Adults (35-64)</td><td>Female</td><td>Australia</td><td>9</td><td>Queensland</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-200</td><td>Silver</td><td>38</td><td>1</td><td>$1,266.00</td><td>$2,320.00</td><td>$1,054.00</td><td>$1,266.00</td><td>$2,320.00</td></tr>
-                    <tr><td>000261706</td><td>12/5/2021</td><td>5</td><td>December</td><td>2021</td><td>37</td><td>Adults (35-64)</td><td>Female</td><td>United States</td><td>13</td><td>California</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-200</td><td>Black</td><td>46</td><td>1</td><td>$1,252.00</td><td>$2,295.00</td><td>$1,043.00</td><td>$1,252.00</td><td>$2,295.00</td></tr>
-                    <tr><td>000261707</td><td>12/6/2021</td><td>6</td><td>December</td><td>2021</td><td>23</td><td>Youth (&lt;25)</td><td>Male</td><td>United Kingdom</td><td>14</td><td>England</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-400-W</td><td>Silver</td><td>46</td><td>3</td><td>$420.00</td><td>$769.00</td><td>$1,047.00</td><td>$1,260.00</td><td>$2,307.00</td></tr>
-                    <tr><td>000261708</td><td>12/6/2021</td><td>6</td><td>December</td><td>2021</td><td>27</td><td>Young Adults (25-34)</td><td>Male</td><td>Canada</td><td>6</td><td>British Columbia</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-200</td><td>Black</td><td>46</td><td>1</td><td>$1,252.00</td><td>$2,295.00</td><td>$1,043.00</td><td>$1,252.00</td><td>$2,295.00</td></tr>
-                    <tr><td>000261709</td><td>12/6/2021</td><td>6</td><td>December</td><td>2021</td><td>36</td><td>Youth (&lt;25)</td><td>Male</td><td>Australia</td><td>9</td><td>New South Wales</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-200</td><td>Black</td><td>42</td><td>1</td><td>$1,252.00</td><td>$2,295.00</td><td>$1,043.00</td><td>$1,252.00</td><td>$2,295.00</td></tr>
-                    <tr><td>000261710</td><td>12/6/2021</td><td>6</td><td>December</td><td>2021</td><td>47</td><td>Adults (35-64)</td><td>Male</td><td>United Kingdom</td><td>14</td><td>England</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-200</td><td>Silver</td><td>38</td><td>1</td><td>$1,266.00</td><td>$2,320.00</td><td>$1,054.00</td><td>$1,266.00</td><td>$2,320.00</td></tr>
-                    <tr><td>000261711</td><td>12/7/2021</td><td>7</td><td>December</td><td>2021</td><td>30</td><td>Young Adults (25-34)</td><td>Male</td><td>United States</td><td>13</td><td>California</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-400-W</td><td>Silver</td><td>38</td><td>4</td><td>$420.00</td><td>$769.00</td><td>$1,396.00</td><td>$1,680.00</td><td>$3,076.00</td></tr>
-                    <tr><td>000261712</td><td>12/7/2021</td><td>7</td><td>December</td><td>2021</td><td>38</td><td>Adults (35-64)</td><td>Male</td><td>United States</td><td>13</td><td>California</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-200</td><td>Silver</td><td>42</td><td>2</td><td>$1,266.00</td><td>$2,320.00</td><td>$2,108.00</td><td>$2,532.00</td><td>$4,640.00</td></tr>
-                    <tr><td>000261713</td><td>12/8/2021</td><td>8</td><td>December</td><td>2021</td><td>19</td><td>Youth (&lt;25)</td><td>Female</td><td>Australia</td><td>9</td><td>New South Wales</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-500</td><td>Silver</td><td>42</td><td>4</td><td>$308.00</td><td>$565.00</td><td>$1,028.00</td><td>$1,232.00</td><td>$2,260.00</td></tr>
-                    <tr><td>000261714</td><td>12/8/2021</td><td>8</td><td>December</td><td>2021</td><td>30</td><td>Young Adults (25-34)</td><td>Female</td><td>Canada</td><td>6</td><td>British Columbia</td><td>Bikes</td><td>Mountain Bikes</td><td>Mountain-200</td><td>Silver</td><td>38</td><td>4</td><td>$1,266.00</td><td>$2,320.00</td><td>$4,216.00</td><td>$5,064.00</td><td>$9,280.00</td></tr>
-                </tbody>
-            </table>
-            <div class="folder-path">Showing sample rows from your provided Excel data.</div>
-        </div>
+            <section class="section">
+                <h2>PROJECT DESCRIPTION</h2>
+                <div class="description">
+                    <p>In this activity, I worked on cleaning and preparing a bike sales dataset using Microsoft Excel. The goal was to transform raw and unorganized data into a structured format suitable for analysis and reporting.</p>
 
-        <div class="excel-image-wrap" style="margin-top:18px;">
-            <h2 class="excel-title">BIKE SALE FACTS</h2>
-            <div id="bikeFactsTableHost" class="table-host"></div>
-        </div>
+                    <p>First, I explored the dataset to understand its structure, which included transaction details such as Sales Order Number, Date, Customer Information, Product Details, and Financial data (Cost, Profit, and Revenue). I adjusted column widths and reviewed the dataset to identify possible issues that could affect analysis.</p>
+
+                    <p>Next, I performed data cleaning by identifying and fixing errors. I checked for duplicate entries, especially in the Sales_Order # column, since it should contain unique values. Duplicate rows were either corrected or removed to ensure data accuracy. I also handled missing or blank values by filling them with appropriate data based on context or correcting them manually.</p>
+
+                    <p>I then improved the dataset by organizing and standardizing the data. One key task I performed was data parsing using Text-to-Columns, where I separated combined product descriptions into individual fields such as Model, Color, and Size. This made the dataset more structured and easier to analyze.</p>
+
+                    <p>After cleaning, I transformed the dataset into a data model (star schema). I separated the data into different tables: Fact_Bike_Sales (main transaction data), Dim_Customer (customer details), Dim_Product (product information), Dim_Date (date-related data), and Dim_Geography (location data).</p>
+
+                    <p>This structure improves data organization and supports better analysis and reporting.</p>
+
+                    <p>Overall, this task helped me understand the importance of data cleaning and preparation. Clean and well-structured data ensures accurate analysis, better insights, and more reliable decision-making.</p>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>PDF DOCUMENT</h2>
+                <div class="download-actions">
+                    <a
+                        class="download-btn"
+                        href="pdf file/Midterm Lab 1 Task Data Cleaning and Preparation/Midterm Lab 1 Task Data Cleaning and Preparation (2).pdf"
+                        download
+                    >DOWNLOAD PDF</a>
+                    <a
+                        class="download-btn"
+                        href="excel file/Midterm Lab 1 Task Data Cleaning and Preparation/Montoya_Bike Sales_Prepare_Lab 3.4.7_fixed.xlsx.xlsx"
+                        download
+                    >DOWNLOAD EXCEL SOFT COPY</a>
+                </div>
+                <iframe
+                    class="pdf-frame"
+                    src="pdf file/Midterm Lab 1 Task Data Cleaning and Preparation/Midterm Lab 1 Task Data Cleaning and Preparation (2).pdf"
+                    title="Midterm Lab 1 Task Data Cleaning and Preparation PDF"
+                ></iframe>
+            </section>
+        </main>
     </div>
-
-    <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
-        <button class="lightbox-close" type="button" onclick="closeLightbox(event)">&times;</button>
-        <div id="lightboxTitle" class="lightbox-title"></div>
-        <img id="lightboxImage" src="" alt="Large preview">
-    </div>
-
-    <script>
-        const bikeFactsData = `Trans_id	Sales_Order #	Date	Day	Month	Year	Customer_Age	Age_Group	Customer_Gender	Country	Length	State	Product_Category	Sub_Category	Model	Color	Size	Order_Quantity	Unit_Cost	Unit_Price	Profit	Cost	Revenue
-T-101	000261695	12/1/2021	1	December	2021	39	Adults (35-64)	Female	United States	13	California	Bikes	Mountain Bikes	Mountain-200	Black	46	4	$1,252.00	$2,295.00	$4,172.00	$5,008.00	$9,180.00
-T-102	000261696	12/1/2021	1	December	2021	44	Adults (35-64)	Male	United Kingdom	14	England	Bikes	Mountain Bikes	Mountain-200	Silver	42	1	$1,266.00	$2,320.00	$1,054.00	$1,266.00	$2,320.00
-T-103	000261697	12/2/2021	2	December	2021	37	Adults (35-64)	Male	United States	13	California	Bikes	Mountain Bikes	Mountain-400-W	Silver	46	2	$420.00	$769.00	$698.00	$840.00	$1,538.00
-T-104	000261698	12/2/2021	2	December	2021	31	Young Adults (25-34)	Female	Australia	9	New South Wales	Bikes	Mountain Bikes	Mountain-400-W	Silver	42	1	$420.00	$769.00	$349.00	$420.00	$769.00
-T-105	000261699	12/3/2021	3	December	2021	37	Adults (35-64)	Female	United States	13	California	Bikes	Mountain Bikes	Mountain-200	Black	46	2	$1,252.00	$2,295.00	$2,086.00	$2,504.00	$4,590.00
-T-106	000261700	12/3/2021	3	December	2021	24	Youth (<25)	Female	United Kingdom	14	England	Bikes	Mountain Bikes	Mountain-200	Black	38	1	$1,252.00	$2,295.00	$1,043.00	$1,252.00	$2,295.00
-T-107	000261701	12/3/2021	3	December	2021	37	Adults (35-64)	Male	United States	13	Washington	Bikes	Mountain Bikes	Mountain-200	Black	46	1	$1,252.00	$2,295.00	$1,043.00	$1,252.00	$2,295.00
-T-108	000261702	12/4/2021	4	December	2021	31	Young Adults (25-34)	Female	Australia	9	New South Wales	Bikes	Mountain Bikes	Mountain-400-W	Silver	42	4	$420.00	$769.00	$1,396.00	$1,680.00	$3,076.00
-T-109	000261703	12/5/2021	5	December	2021	39	Adults (35-64)	Female	United States	13	California	Bikes	Mountain Bikes	Mountain-200	Black	46	4	$1,252.00	$2,295.00	$4,172.00	$5,008.00	$9,180.00
-T-110	000261704	12/5/2021	5	December	2021	42	Adults (35-64)	Male	Germany	7	Nordrhein-Westfalen	Bikes	Mountain Bikes	Mountain-200	Black	38	4	$1,252.00	$2,295.00	$4,172.00	$5,008.00	$9,180.00
-T-111	000261705	12/5/2021	5	December	2021	35	Adults (35-64)	Female	Australia	9	Queensland	Bikes	Mountain Bikes	Mountain-200	Silver	38	1	$1,266.00	$2,320.00	$1,054.00	$1,266.00	$2,320.00
-T-112	000261706	12/5/2021	5	December	2021	37	Adults (35-64)	Female	United States	13	California	Bikes	Mountain Bikes	Mountain-200	Black	46	1	$1,252.00	$2,295.00	$1,043.00	$1,252.00	$2,295.00
-T-113	000261707	12/6/2021	6	December	2021	23	Youth (<25)	Male	United Kingdom	14	England	Bikes	Mountain Bikes	Mountain-400-W	Silver	46	3	$420.00	$769.00	$1,047.00	$1,260.00	$2,307.00
-T-114	000261708	12/6/2021	6	December	2021	27	Young Adults (25-34)	Male	Canada	6	British Columbia	Bikes	Mountain Bikes	Mountain-200	Black	46	1	$1,252.00	$2,295.00	$1,043.00	$1,252.00	$2,295.00
-T-115	000261709	12/6/2021	6	December	2021	36	Youth (<25)	Male	Australia	9	New South Wales	Bikes	Mountain Bikes	Mountain-200	Black	42	1	$1,252.00	$2,295.00	$1,043.00	$1,252.00	$2,295.00
-T-116	000261710	12/6/2021	6	December	2021	47	Adults (35-64)	Male	United Kingdom	14	England	Bikes	Mountain Bikes	Mountain-200	Silver	38	1	$1,266.00	$2,320.00	$1,054.00	$1,266.00	$2,320.00
-T-117	000261711	12/7/2021	7	December	2021	30	Young Adults (25-34)	Male	United States	13	California	Bikes	Mountain Bikes	Mountain-400-W	Silver	38	4	$420.00	$769.00	$1,396.00	$1,680.00	$3,076.00
-T-118	000261712	12/7/2021	7	December	2021	38	Adults (35-64)	Male	United States	13	California	Bikes	Mountain Bikes	Mountain-200	Silver	42	2	$1,266.00	$2,320.00	$2,108.00	$2,532.00	$4,640.00
-T-119	000261713	12/8/2021	8	December	2021	19	Youth (<25)	Female	Australia	9	New South Wales	Bikes	Mountain Bikes	Mountain-500	Silver	42	4	$308.00	$565.00	$1,028.00	$1,232.00	$2,260.00
-T-120	000261714	12/8/2021	8	December	2021	30	Young Adults (25-34)	Female	Canada	6	British Columbia	Bikes	Mountain Bikes	Mountain-200	Silver	38	4	$1,266.00	$2,320.00	$4,216.00	$5,064.00	$9,280.00
-T-121	000261715	12/8/2021	8	December	2021	39	Adults (35-64)	Female	United States	13	Oregon	Bikes	Mountain Bikes	Mountain-200	Black	42	2	$1,252.00	$2,295.00	$2,086.00	$2,504.00	$4,590.00
-T-122	000261716	12/8/2021	8	December	2021	35	Adults (35-64)	Female	United States	13	California	Bikes	Mountain Bikes	Mountain-500	Black	42	4	$295.00	$540.00	$245.00	$1,180.00	$2,160.00
-T-123	000261717	12/9/2021	9	December	2021	33	Young Adults (25-34)	Female	Australia	9	Victoria	Bikes	Mountain Bikes	Mountain-100	Black	38	2	$1,898.00	$3,375.00	$2,954.00	$3,796.00	$6,750.00
-T-124	000261718	12/9/2021	9	December	2021	41	Adults (35-64)	Female	Germany	7	Hamburg	Bikes	Mountain Bikes	Mountain-200	Silver	42	1	$1,266.00	$2,320.00	$1,054.00	$1,266.00	$2,320.00
-T-125	000261719	12/10/2021	10	December	2021	34	Young Adults (25-34)	Female	United States	13	California	Bikes	Mountain Bikes	Mountain-200	Black	42	2	$1,252.00	$2,295.00	$2,086.00	$2,504.00	$4,590.00
-T-126	000261720	12/10/2021	10	December	2021	40	Adults (35-64)	Male	Australia	9	New South Wales	Bikes	Mountain Bikes	Mountain-200	Black	42	2	$1,252.00	$2,295.00	$2,086.00	$2,504.00	$4,590.00
-T-127	000261721	12/10/2021	10	December	2021	26	Young Adults (25-34)	Male	United Kingdom	14	England	Bikes	Mountain Bikes	Mountain-200	Black	38	1	$1,252.00	$2,295.00	$1,043.00	$1,252.00	$2,295.00
-T-128	000261722	12/10/2021	10	December	2021	34	Young Adults (25-34)	Male	United States	13	California	Bikes	Mountain Bikes	Mountain-500	Black	40	1	$295.00	$540.00	$245.00	$295.00	$540.00
-T-129	000261723	12/10/2021	10	December	2021	34	Young Adults (25-34)	Female	United States	13	Washington	Bikes	Mountain Bikes	Mountain-100	Silver	44	1	$1,912.00	$3,400.00	$1,488.00	$1,912.00	$3,400.00
-T-130	000261724	12/10/2021	10	December	2021	38	Adults (35-64)	Male	Australia	9	New South Wales	Bikes	Mountain Bikes	Mountain-200	Black	38	1	$1,252.00	$2,295.00	$1,043.00	$1,252.00	$2,295.00
-T-131	000261725	12/11/2021	11	December	2021	24	Youth (<25)	Female	France	6	Seine (Paris)	Bikes	Mountain Bikes	Mountain-200	Black	38	3	$1,252.00	$2,295.00	$3,129.00	$3,756.00	$6,885.00
-T-132	000261726	12/11/2021	11	December	2021	41	Adults (35-64)	Female	Australia	9	New South Wales	Bikes	Mountain Bikes	Mountain-400-W	Silver	38	2	$420.00	$769.00	$698.00	$840.00	$1,538.00
-T-133	000261727	12/11/2021	11	December	2021	27	Young Adults (25-34)	Male	Canada	6	British Columbia	Bikes	Mountain Bikes	Mountain-200	Black	46	1	$1,252.00	$2,295.00	$1,043.00	$1,252.00	$2,295.00
-T-134	000261728	12/11/2021	11	December	2021	37	Adults (35-64)	Male	United States	13	California	Bikes	Mountain Bikes	Mountain-400-W	Silver	46	1	$420.00	$769.00	$349.00	$420.00	$769.00
-T-135	000261729	12/11/2021	11	December	2021	38	Adults (35-64)	Female	United States	13	California	Bikes	Mountain Bikes	Mountain-200	Silver	38	1	$1,266.00	$2,320.00	$1,054.00	$1,266.00	$2,320.00
-T-136	000261730	12/12/2021	12	December	2021	36	Adults (35-64)	Female	Australia	9	New South Wales	Bikes	Mountain Bikes	Mountain-200	Silver	42	4	$1,266.00	$2,320.00	$4,216.00	$5,064.00	$9,280.00
-T-137	000261731	12/12/2021	12	December	2021	37	Adults (35-64)	Male	United States	13	California	Bikes	Mountain Bikes	Mountain-400-W	Silver	46	4	$420.00	$769.00	$1,396.00	$1,680.00	$3,076.00
-T-138	000261732	12/12/2021	12	December	2021	34	Young Adults (25-34)	Male	Australia	9	New South Wales	Bikes	Mountain Bikes	Mountain-200	Black	38	2	$1,252.00	$2,295.00	$2,086.00	$2,504.00	$4,590.00
-T-139	000261733	12/12/2021	12	December	2021	35	Adults (35-64)	Female	Australia	9	Victoria	Bikes	Mountain Bikes	Mountain-200	Silver	42	1	$1,266.00	$2,320.00	$1,054.00	$1,266.00	$2,320.00
-T-140	000261734	12/12/2021	12	December	2021	38	Adults (35-64)	Female	United States	13	Washington	Bikes	Mountain Bikes	Mountain-200	Silver	42	1	$1,266.00	$2,320.00	$1,054.00	$1,266.00	$2,320.00
-T-141	000261735	12/13/2021	13	December	2021	32	Young Adults (25-34)	Female	Australia	9	Queensland	Bikes	Mountain Bikes	Mountain-200	Silver	42	3	$1,266.00	$2,320.00	$3,162.00	$3,798.00	$6,960.00
-T-142	000261736	12/13/2021	13	December	2021	40	Adults (35-64)	Female	United States	13	California	Bikes	Mountain Bikes	Mountain-500	Silver	40	1	$308.00	$565.00	$257.00	$308.00	$565.00
-T-143	000261737	12/13/2021	13	December	2021	44	Adults (35-64)	Female	United Kingdom	14	England	Bikes	Mountain Bikes	Mountain-200	Black	38	1	$1,252.00	$2,295.00	$1,043.00	$1,252.00	$2,295.00
-T-144	000261738	12/13/2021	13	December	2021	49	Adults (35-64)	Male	United Kingdom	14	England	Bikes	Mountain Bikes	Mountain-200	Black	38	1	$1,252.00	$2,295.00	$1,043.00	$1,252.00	$2,295.00
-T-145	000261739	12/14/2021	14	December	2021	30	Young Adults (25-34)	Female	United States	13	Washington	Bikes	Mountain Bikes	Mountain-200	Silver	38	2	$1,266.00	$2,320.00	$2,108.00	$2,532.00	$4,640.00
-T-146	000261740	12/14/2021	14	December	2021	32	Young Adults (25-34)	Male	United States	13	California	Bikes	Mountain Bikes	Mountain-200	Black	46	1	$1,252.00	$2,295.00	$1,043.00	$1,252.00	$2,295.00
-T-147	000261741	12/14/2021	14	December	2021	32	Young Adults (25-34)	Female	Australia	9	Victoria	Bikes	Mountain Bikes	Mountain-400-W	Silver	46	1	$420.00	$769.00	$349.00	$420.00	$769.00
-T-148	000261742	12/15/2021	15	December	2021	29	Young Adults (25-34)	Female	United States	13	California	Bikes	Mountain Bikes	Mountain-200	Silver	42	1	$1,266.00	$2,320.00	$1,054.00	$1,266.00	$2,320.00
-T-149	000261743	12/16/2021	16	December	2021	33	Young Adults (25-34)	Female	Australia	9	New South Wales	Bikes	Mountain Bikes	Mountain-200	Black	38	2	$1,252.00	$2,295.00	$2,086.00	$2,504.00	$4,590.00
-T-150	000261744	12/16/2021	16	December	2021	38	Adults (35-64)	Male	Australia	9	New South Wales	Bikes	Mountain Bikes	Mountain-200	Black	38	2	$1,252.00	$2,295.00	$2,086.00	$2,504.00	$4,590.00
-T-151	000261745	12/16/2021	16	December	2021	27	Young Adults (25-34)	Female	France	6	Seine et Marne	Bikes	Mountain Bikes	Mountain-200	Silver	46	1	$1,266.00	$2,320.00	$1,054.00	$1,266.00	$2,320.00
-T-152	000261746	12/17/2021	17	December	2021	37	Adults (35-64)	Female	United States	13	Washington	Bikes	Mountain Bikes	Mountain-200	Silver	38	2	$1,266.00	$2,320.00	$2,108.00	$2,532.00	$4,640.00
-T-153	000261747	12/17/2021	17	December	2021	31	Young Adults (25-34)	Male	Australia	9	New South Wales	Bikes	Mountain Bikes	Mountain-400-W	Silver	42	1	$420.00	$769.00	$349.00	$420.00	$769.00
-T-154	000261748	12/17/2021	17	December	2021	42	Adults (35-64)	Female	Germany	7	Nordrhein-Westfalen	Bikes	Mountain Bikes	Mountain-200	Silver	46	1	$1,266.00	$2,320.00	$1,054.00	$1,266.00	$2,320.00
-T-155	000261749	12/18/2021	18	December	2021	35	Adults (35-64)	Female	Australia	9	New South Wales	Bikes	Mountain Bikes	Mountain-500	Silver	42	4	$308.00	$565.00	$1,028.00	$1,232.00	$2,260.00
-T-156	000261750	12/18/2021	18	December	2021	38	Adults (35-64)	Female	Germany	7	Nordrhein-Westfalen	Bikes	Mountain Bikes	Mountain-200	Silver	46	4	$1,266.00	$2,320.00	$4,216.00	$5,064.00	$9,280.00
-T-157	000261751	12/18/2021	18	December	2021	24	Youth (<25)	Female	France	6	Seine Saint Denis	Bikes	Mountain Bikes	Mountain-200	Silver	38	3	$1,266.00	$2,320.00	$3,162.00	$3,798.00	$6,960.00
-T-158	000261752	12/18/2021	18	December	2021	26	Young Adults (25-34)	Female	United Kingdom	14	England	Bikes	Mountain Bikes	Mountain-400-W	Silver	42	3	$420.00	$769.00	$1,047.00	$1,260.00	$2,307.00
-T-159	000261753	12/18/2021	18	December	2021	39	Adults (35-64)	Male	United States	13	California	Bikes	Mountain Bikes	Mountain-200	Black	42	3	$1,252.00	$2,295.00	$3,129.00	$3,756.00	$6,885.00
-T-160	000261754	12/18/2021	18	December	2021	26	Young Adults (25-34)	Male	France	6	Seine (Paris)	Bikes	Mountain Bikes	Mountain-200	Black	46	1	$1,252.00	$2,295.00	$1,043.00	$1,252.00	$2,295.00
-T-161	000261755	12/18/2021	18	December	2021	36	Adults (35-64)	Male	United States	13	Washington	Bikes	Mountain Bikes	Mountain-200	Silver	38	1	$1,266.00	$2,320.00	$1,054.00	$1,266.00	$2,320.00
-T-162	000261756	12/19/2021	19	December	2021	17	Youth (<25)	Male	France	6	Nord	Bikes	Mountain Bikes	Mountain-200	Silver	46	4	$1,266.00	$2,320.00	$4,216.00	$5,064.00	$9,280.00
-T-163	000261757	12/19/2021	19	December	2021	19	Youth (<25)	Female	Australia	9	Victoria	Bikes	Mountain Bikes	Mountain-500	Black	44	4	$295.00	$540.00	$980.00	$1,180.00	$2,160.00
-T-164	000261758	12/19/2021	19	December	2021	25	Young Adults (25-34)	Male	France	6	Seine (Paris)	Bikes	Mountain Bikes	Mountain-200	Black	38	4	$1,252.00	$2,295.00	$4,172.00	$5,008.00	$9,180.00
-T-165	000261759	12/19/2021	19	December	2021	35	Adults (35-64)	Female	United States	13	Oregon	Bikes	Mountain Bikes	Mountain-100	Black	48	4	$1,898.00	$3,375.00	$5,908.00	$7,592.00	$13,500.00
-T-166	000261760	12/19/2021	19	December	2021	37	Adults (35-64)	Male	United States	13	Oregon	Bikes	Mountain Bikes	Mountain-200	Black	38	4	$1,252.00	$2,295.00	$4,172.00	$5,008.00	$9,180.00
-T-167	000261761	12/19/2021	19	December	2021	39	Adults (35-64)	Female	United States	13	California	Bikes	Mountain Bikes	Mountain-200	Black	46	4	$1,252.00	$2,295.00	$4,172.00	$5,008.00	$9,180.00
-T-168	000261762	12/19/2021	19	December	2021	63	Adults (35-64)	Female	Australia	9	Queensland	Bikes	Mountain Bikes	Mountain-200	Black	46	4	$1,252.00	$2,295.00	$4,172.00	$5,008.00	$9,180.00
-T-169	000261763	12/19/2021	19	December	2021	18	Youth (<25)	Male	Australia	9	South Australia	Bikes	Mountain Bikes	Mountain-500	Black	40	2	$295.00	$540.00	$490.00	$590.00	$1,080.00
-T-170	000261764	12/19/2021	19	December	2021	56	Adults (35-64)	Female	Germany	7	Hessen	Bikes	Mountain Bikes	Mountain-200	Black	46	2	$1,252.00	$2,295.00	$2,086.00	$2,504.00	$4,590.00
-T-171	000261765	12/19/2021	19	December	2021	39	Adults (35-64)	Female	United States	13	Washington	Bikes	Mountain Bikes	Mountain-200	Silver	38	1	$1,266.00	$2,320.00	$1,054.00	$1,266.00	$2,320.00
-T-172	000261766	12/20/2021	20	December	2021	33	Young Adults (25-34)	Female	Australia	9	Victoria	Bikes	Mountain Bikes	Mountain-100	Black	38	4	$1,898.00	$3,375.00	$5,908.00	$7,592.00	$13,500.00
-T-173	000261767	12/20/2021	20	December	2021	57	Adults (35-64)	Male	Australia	9	Queensland	Bikes	Mountain Bikes	Mountain-200	Black	46	4	$1,252.00	$2,295.00	$4,172.00	$5,008.00	$9,180.00
-T-174	000261768	12/20/2021	20	December	2021	29	Young Adults (25-34)	Male	Canada	6	British Columbia	Bikes	Mountain Bikes	Mountain-500	Black	52	3	$295.00	$540.00	$735.00	$885.00	$1,620.00
-T-175	000261769	12/20/2021	20	December	2021	35	Adults (35-64)	Female	Australia	9	Queensland	Bikes	Mountain Bikes	Mountain-200	Silver	38	1	$1,266.00	$2,320.00	$1,054.00	$1,266.00	$2,320.00
-T-176	000261770	12/20/2021	20	December	2021	35	Adults (35-64)	Male	Australia	9	Victoria	Bikes	Mountain Bikes	Mountain-200	Silver	38	1	$1,266.00	$2,320.00	$1,054.00	$1,266.00	$2,320.00
-T-177	000261771	12/21/2021	21	December	2021	26	Young Adults (25-34)	Male	France	6	Somme	Bikes	Mountain Bikes	Mountain-200	Silver	38	3	$1,266.00	$2,320.00	$3,162.00	$3,798.00	$6,960.00
-T-178	000261772	12/21/2021	21	December	2021	23	Youth (<25)	Male	United Kingdom	14	England	Bikes	Mountain Bikes	Mountain-400-W	Silver	46	2	$420.00	$769.00	$698.00	$840.00	$1,538.00
-T-179	000261773	12/22/2021	22	December	2021	30	Young Adults (25-34)	Female	United States	13	Washington	Bikes	Mountain Bikes	Mountain-200	Silver	38	3	$1,266.00	$2,320.00	$3,162.00	$3,798.00	$6,960.00
-T-180	000261774	12/22/2021	22	December	2021	41	Adults (35-64)	Male	United States	13	California	Bikes	Mountain Bikes	Mountain-200	Black	42	3	$1,252.00	$2,295.00	$3,129.00	$3,756.00	$6,885.00
-T-181	000261775	12/22/2021	22	December	2021	19	Youth (<25)	Female	Australia	9	New South Wales	Bikes	Mountain Bikes	Mountain-500	Silver	42	1	$308.00	$565.00	$257.00	$308.00	$565.00
-T-182	000261776	12/22/2021	22	December	2021	25	Young Adults (25-34)	Male	France	6	Seine (Paris)	Bikes	Mountain Bikes	Mountain-200	Black	38	1	$1,252.00	$2,295.00	$1,043.00	$1,252.00	$2,295.00
-T-183	000261777	12/22/2021	22	December	2021	27	Young Adults (25-34)	Female	Canada	6	British Columbia	Bikes	Mountain Bikes	Mountain-200	Black	46	1	$1,252.00	$2,295.00	$1,043.00	$1,252.00	$2,295.00
-T-184	000261778	12/22/2021	22	December	2021	41	Adults (35-64)	Male	Germany	7	Hessen	Bikes	Mountain Bikes	Mountain-200	Silver	38	1	$1,266.00	$2,320.00	$1,054.00	$1,266.00	$2,320.00
-T-185	000261779	12/23/2021	23	December	2021	30	Young Adults (25-34)	Female	United States	13	Oregon	Bikes	Mountain Bikes	Mountain-200	Silver	42	1	$1,266.00	$2,320.00	$1,054.00	$1,266.00	$2,320.00
-T-186	000261780	12/23/2021	23	December	2021	31	Young Adults (25-34)	Female	Canada	6	British Columbia	Bikes	Mountain Bikes	Mountain-200	Black	42	1	$1,252.00	$2,295.00	$1,043.00	$1,252.00	$2,295.00
-T-187	000261781	12/23/2021	23	December	2021	35	Adults (35-64)	Female	United States	13	California	Bikes	Mountain Bikes	Mountain-500	Black	42	1	$295.00	$540.00	$245.00	$295.00	$540.00
-T-188	000261782	12/24/2021	24	December	2021	38	Adults (35-64)	Male	Australia	9	Queensland	Bikes	Mountain Bikes	Mountain-200	Black	42	4	$1,252.00	$2,295.00	$4,172.00	$5,008.00	$9,180.00`;
-
-        const lines = bikeFactsData.trim().split('\n');
-        const headers = lines[0].split('\t');
-        const rows = lines.slice(1).map(line => line.split('\t'));
-
-        const table = document.createElement('table');
-        table.className = 'excel-table';
-
-        const thead = document.createElement('thead');
-        const trHead = document.createElement('tr');
-        headers.forEach(h => {
-            const th = document.createElement('th');
-            th.textContent = h;
-            trHead.appendChild(th);
-        });
-        thead.appendChild(trHead);
-
-        const tbody = document.createElement('tbody');
-        rows.forEach(r => {
-            const tr = document.createElement('tr');
-            r.forEach(c => {
-                const td = document.createElement('td');
-                td.textContent = c;
-                tr.appendChild(td);
-            });
-            tbody.appendChild(tr);
-        });
-
-        table.appendChild(thead);
-        table.appendChild(tbody);
-        document.getElementById('bikeFactsTableHost').appendChild(table);
-
-        function openLightbox(imgEl) {
-            document.getElementById('lightboxImage').src = imgEl.src;
-            document.getElementById('lightboxTitle').textContent = imgEl.alt;
-            document.getElementById('lightbox').classList.add('show');
-        }
-
-        function closeLightbox(event) {
-            if (!event || event.target.id === 'lightbox' || event.target.classList.contains('lightbox-close')) {
-                document.getElementById('lightbox').classList.remove('show');
-            }
-        }
-    </script>
 </body>
 </html>
